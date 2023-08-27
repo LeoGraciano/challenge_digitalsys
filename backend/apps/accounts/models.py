@@ -40,5 +40,6 @@ class User(AbstractBaseUser, PermissionsMixin, BaseFields):
         return self.email
 
     class Meta:
+        db_table = "tb_users"
         verbose_name = _("Usuário")
         verbose_name_plural = _("Usuários")

@@ -54,4 +54,4 @@ services:
     stdin_open: true
     tty: true
 
-    command: bash -c "poetry run python manage.py makemigrations accounts core && poetry run python manage.py migrate && poetry run python manage.py runserver 0.0.0.0:8000"
+    command: bash -c "poetry run python manage.py makemigrations accounts core dynamic_forms && poetry run python manage.py migrate && poetry run python manage.py runserver 0.0.0.0:8000"
