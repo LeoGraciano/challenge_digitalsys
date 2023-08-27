@@ -1,0 +1,57 @@
+version: '3.9'
+
+volumes:
+  db-data-1:
+
+services:
+
+  db_redis:
+    container_name: db_challenge_redis
+    image: redis:latest
+    volumes:
+      - db-data-1:/pgdata
+    ports:
+      - "6379:6379"
+
+  db_postgres:
+    container_name: db_challenge_postgres
+    logging:
+      driver: none
+    image: "postgres:13"
+    volumes:
+      - db-data-1:/pgdata
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: teste
+      POSTGRES_DB: db_challange
+      POSTGRES_USER: postgres
+      PGDATA: /pgdata
+
+
+  app:
+    build:
+      dockerfile: Dockerfile
+      context: .
+    depends_on:
+      - db_postgres
+      - db_redis
+    volumes:
+      - ./:/usr/src/app
+    ports:
+      - "8000:8000"
+    environment:
+
+      DB_NAME: db_challange
+      DB_HOST: db_postgres
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: teste
+
+      STAGE: LOCAL
+
+    # Make interactive
+    stdin_open: true
+    tty: true
+
+    command: bash -c "poetry run python manage.py makemigrations accounts core && poetry run python manage.py migrate && poetry run python manage.py runserver 0.0.0.0:8000"
